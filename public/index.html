@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <style>
+    #inputVideo,
+    #overlay {
+      position: absolute;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="position: relative" class="margin">
+    <video id="inputVideo" autoplay muted></video>
+    <canvas id="overlay"></canvas>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="dist/vendors~index.bundle.js"></script>
+  <script src="dist/index.bundle.js"></script>
+</body>
+
+</html>

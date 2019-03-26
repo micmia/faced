@@ -1,0 +1,21 @@
+{
+  "name": "faced",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "face-api.js": "^0.18.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  },
+  "scripts": {
+    "dev": "webpack --watch --progress -p",
+    "start": "node ./bin/www"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
