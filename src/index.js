@@ -38,7 +38,19 @@ async function onPlay() {
 
   const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 512, scoreThreshold: 0.5 });
   const result = await faceapi.detectSingleFace(videoEl, options).withFaceLandmarks(true);
-  console.log(result);
+
+  if (result && result.landmarks) {
+    const landmarks = result.landmarks
+    const landmarkPositions = landmarks.positions;
+    const jawOutline = landmarks.getJawOutline();
+    const nose = landmarks.getNose();
+    const mouth = landmarks.getMouth();
+    const leftEye = landmarks.getLeftEye();
+    const rightEye = landmarks.getRightEye();
+    const leftEyeBbrow = landmarks.getLeftEyeBrow();
+    const rightEyeBrow = landmarks.getRightEyeBrow();
+    console.log(leftEyeBbrow, rightEyeBrow);
+  }
 
   if (result) {
     drawLandmarks(videoEl, $('#overlay').get(0), [result], false);
