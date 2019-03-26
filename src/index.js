@@ -44,7 +44,7 @@ async function onPlay() {
     drawLandmarks(videoEl, $('#overlay').get(0), [result], false);
   }
 
-  setTimeout(() => onPlay());
+  requestAnimationFrame(onPlay);
 }
 
 async function run() {
