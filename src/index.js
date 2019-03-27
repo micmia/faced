@@ -36,7 +36,7 @@ async function onPlay() {
     return setTimeout(() => onPlay());
   }
 
-  const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 512, scoreThreshold: 0.5 });
+  const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.5 });
   const result = await faceapi.detectSingleFace(videoEl, options).withFaceLandmarks(true);
 
   if (result && result.landmarks) {
@@ -56,7 +56,8 @@ async function onPlay() {
     drawLandmarks(videoEl, $('#overlay').get(0), [result], false);
   }
 
-  requestAnimationFrame(onPlay);
+  setTimeout(onPlay);
+  // requestAnimationFrame(onPlay);
 }
 
 async function run() {
