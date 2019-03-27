@@ -5,7 +5,8 @@
   "main": "webpack.config.js",
   "dependencies": {
     "express": "^4.16.4",
-    "face-api.js": "^0.18.0"
+    "face-api.js": "^0.18.0",
+    "three": "^0.102.1"
   },
   "devDependencies": {
     "webpack": "^4.29.6",

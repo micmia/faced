@@ -1,4 +1,5 @@
 import * as faceapi from 'face-api.js';
+import * as THREE from 'three';
 
 function resizeCanvasAndResults(dimensions, canvas, results) {
   const { width, height } = dimensions instanceof HTMLVideoElement
@@ -29,27 +30,28 @@ function drawLandmarks(dimensions, canvas, results, withBoxes = true) {
   faceapi.drawLandmarks(canvas, faceLandmarks, drawLandmarksOptions);
 }
 
-const drawLandmarksThreshold = 3;
-let oldLandmarksPositions = [];
-function landmarksMeanDeta(newLandmarksPositions) {
-  if (!oldLandmarksPositions.length) {
-    oldLandmarksPositions = newLandmarksPositions;
+const drawLandmarksThreshold = 2.5;
+let oldLandmarksVectors = [];
+function landmarksMeanDeta(newLandmarksVectors) {
+  if (!oldLandmarksVectors.length) {
+    oldLandmarksVectors = newLandmarksVectors;
     return;
   }
 
-  let deta = [];
-  for (let i in newLandmarksPositions) {
-    deta.push(Math.sqrt(Math.pow((newLandmarksPositions[i]._x - oldLandmarksPositions[i]._x), 2) + Math.pow((newLandmarksPositions[i]._y - oldLandmarksPositions[i]._y), 2)));
+  let d = [];
+  for (let i in newLandmarksVectors) {
+    d.push(newLandmarksVectors[i].distanceTo(oldLandmarksVectors[i]));
   }
 
-  oldLandmarksPositions = newLandmarksPositions;
+  oldLandmarksVectors = newLandmarksVectors;
 
   let mean = (array) => array.reduce((a, b) => a + b) / array.length;
-  return mean(deta);
+  return mean(d);
 }
 
 async function onPlay() {
   const videoEl = $('#inputVideo').get(0);
+  const overlayEl = $('#overlay').get(0);
 
   if (videoEl.paused || videoEl.ended) {
     return setTimeout(() => onPlay());
@@ -69,11 +71,28 @@ async function onPlay() {
     const leftEyeBbrow = landmarks.getLeftEyeBrow();
     const rightEyeBrow = landmarks.getRightEyeBrow();
 
-    if (landmarksMeanDeta(landmarkPositions) >= drawLandmarksThreshold) {
-      drawLandmarks(videoEl, $('#overlay').get(0), [result], false);
+    let landmark2DVectors = [];
+    let landmark3DVectors = [];
+
+    for (let i in landmarkPositions) {
+      landmark2DVectors.push(new THREE.Vector2(landmarkPositions[i]._x, landmarkPositions[i]._y));
     }
 
+    if (landmarksMeanDeta(landmark2DVectors) >= drawLandmarksThreshold) {
+      drawLandmarks(videoEl, overlayEl, [result], false);
+    }
+
+    const aspect = overlayEl.width / overlayEl.height;
+    const camera = new THREE.PerspectiveCamera(50, 0.5 * aspect, 1, 10000);
+    for (let i in landmark2DVectors) {
+      const landmark2DVector = landmark2DVectors[i];
+      const landmark3DVector = new THREE.Vector3(landmark2DVector.x, landmark2DVector.y, -1).unproject(camera);
+      landmark3DVectors.push(landmark3DVector);
+    }
+
+    console.log(landmark3DVectors);
   }
+
   setTimeout(onPlay);
   // requestAnimationFrame(onPlay);
 }
