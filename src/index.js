@@ -29,6 +29,25 @@ function drawLandmarks(dimensions, canvas, results, withBoxes = true) {
   faceapi.drawLandmarks(canvas, faceLandmarks, drawLandmarksOptions);
 }
 
+const drawLandmarksThreshold = 3;
+let oldLandmarksPositions = [];
+function landmarksMeanDeta(newLandmarksPositions) {
+  if (!oldLandmarksPositions.length) {
+    oldLandmarksPositions = newLandmarksPositions;
+    return;
+  }
+
+  let deta = [];
+  for (let i in newLandmarksPositions) {
+    deta.push(Math.sqrt(Math.pow((newLandmarksPositions[i]._x - oldLandmarksPositions[i]._x), 2) + Math.pow((newLandmarksPositions[i]._y - oldLandmarksPositions[i]._y), 2)));
+  }
+
+  oldLandmarksPositions = newLandmarksPositions;
+
+  let mean = (array) => array.reduce((a, b) => a + b) / array.length;
+  return mean(deta);
+}
+
 async function onPlay() {
   const videoEl = $('#inputVideo').get(0);
 
@@ -49,13 +68,12 @@ async function onPlay() {
     const rightEye = landmarks.getRightEye();
     const leftEyeBbrow = landmarks.getLeftEyeBrow();
     const rightEyeBrow = landmarks.getRightEyeBrow();
-    console.log(leftEyeBbrow, rightEyeBrow);
-  }
 
-  if (result) {
-    drawLandmarks(videoEl, $('#overlay').get(0), [result], false);
-  }
+    if (landmarksMeanDeta(landmarkPositions) >= drawLandmarksThreshold) {
+      drawLandmarks(videoEl, $('#overlay').get(0), [result], false);
+    }
 
+  }
   setTimeout(onPlay);
   // requestAnimationFrame(onPlay);
 }
